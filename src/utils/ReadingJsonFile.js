@@ -1,18 +1,13 @@
-module.exports = function readAvailabilityJSONFile() {
-    return new Promise((resolve, reject) => {
-        fs.readFile(FilePath, 'utf8', (err, data) => {
-            if (err) {
-                console.error(err);
-                reject(err);
-                return;
-            }
-            try {
-                const jsonFile = JSON.parse(data);
-                resolve(jsonFile.availabilityTimings);
-            } catch (error) {
-                console.error('Error parsing JSON:', error);
-                reject(error);
-            }
-        });
-    });
+const fs = require('fs');
+const { FilePath } = require("../config/server-config");
+
+module.exports = async function readAvailabilityJSONFile() {
+    try {
+        const data = await fs.promises.readFile(FilePath, 'utf8');
+        const jsonFile = JSON.parse(data);
+        return jsonFile.availabilityTimings;
+    } catch (error) {
+        console.error('Error reading JSON file:', error);
+        throw new Error('Error reading JSON file');
+    }
 };

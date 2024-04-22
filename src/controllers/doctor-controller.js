@@ -10,7 +10,6 @@ class DoctorController{
     async getAvailability(req,res){
         try {
             const response = await this.doctorController.AvailabilityCheck({date:req.query.date,time:req.query.time});
-            console.log(response);
             return res.status(StatusCodes.OK).json({
                 data:response,
                 success:true,

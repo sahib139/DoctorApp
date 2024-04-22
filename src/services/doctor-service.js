@@ -1,5 +1,3 @@
-const fs = require('fs');
-const { FilePath } = require("../config/server-config");
 const {DateTimeConversion,ReadingJsonFile} = require("../utils/index");
 
 class DoctorService {
@@ -8,32 +6,37 @@ class DoctorService {
         this.weekdays = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     }
 
-    nextAvailableSlot(data, weekDayIndex, availabilityData) {
+    findNextAvailableSlot(data, weekDayIndex, availabilityData) {
         const givenDateTime = new Date(`${data.date}T${data.time}`);
         let count = 0;
-        while (true) {
-            for (let TimeSlot of availabilityData[this.weekdays[weekDayIndex]]) {
-                let changeDate = new Date(`${data.date}T${TimeSlot.start}`);
-                changeDate.setDate(changeDate.getDate() + count);
-                if (changeDate.getTime() >= givenDateTime.getTime()) {
-                    return {
-                        isAvailable: false,
-                        nextAvailableSlot: {
-                            date: changeDate.toISOString().split('T')[0],
-                            time: TimeSlot.start
-                        }
-                    };
+        while (count < 7) {
+            const dayAvailability = availabilityData[this.weekdays[weekDayIndex]];
+            if (dayAvailability.length > 0) {
+                for (let TimeSlot of dayAvailability) {
+                    let changeDate = new Date(`${data.date}T${TimeSlot.start}`);
+                    changeDate.setDate(changeDate.getDate() + count);
+                    if (changeDate.getTime() >= givenDateTime.getTime()) {
+                        return {
+                            isAvailable: false,
+                            nextAvailableSlot: {
+                                date: changeDate.toISOString().split('T')[0],
+                                time: TimeSlot.start
+                            }
+                        };
+                    }
                 }
             }
             count++;
             weekDayIndex = (weekDayIndex + 1) % 7;
         }
+        throw new Error('Next available slot not found');
     }
+
 
     async AvailabilityCheck(data) {
         try {
             
-            const availabilityData = await this.ReadingJsonFile();
+            const availabilityData = await ReadingJsonFile();
             const weekDayIndex = DateTimeConversion.getWeekdayFromDate(data.date);
             
             for (let TimeSlot of availabilityData[this.weekdays[weekDayIndex]]) {
@@ -41,7 +44,7 @@ class DoctorService {
                     return { isAvailable: true };
                 }
             }
-            return this.nextAvailableSlot(data, weekDayIndex, availabilityData);
+            return this.findNextAvailableSlot(data, weekDayIndex, availabilityData);
         } catch (error) {
             console.log(error);
             return { isAvailable: false };

@@ -3,5 +3,5 @@ dotenv.config();
 
 module.exports={
     PORT : process.env.PORT,
-    FilePath : process.env.FilePath,
+    FilePath : __dirname+"/../../DynamicJsonFile/availability.json",
 }
