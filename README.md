@@ -12,13 +12,15 @@
 
 - Project is also live purpose , you can request in following ways.
     - `http://13.60.19.44:3002/hey`
-        - response -> ```
+        - response ->
+       ```
         {
             "message": "hey"
         }
-        ```
+       ```
     - `http://13.60.19.44:3002/api/v1/doctor-availability?date=2025-02-22&time=10:33`
-        - response -> ```
+        - response ->
+       ```
         {
           "data": {
             "isAvailable": true
@@ -27,9 +29,10 @@
           "message": "successfully fetch the response",
           "err": {}
         }
-        ```
+       ```
     - `http://13.60.19.44:3002/api/v1/doctor-availability?date=2025-02-22&time=13:01`
-        - response -> ```
+        - response ->
+       ```
         {
           "data": {
             "isAvailable": false,
@@ -42,4 +45,4 @@
           "message": "successfully fetch the response",
           "err": {}
         }
-        ```
+       ```
